@@ -1,20 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.streamConcurrencyLimiter = void 0;
-var env_1 = require("../config/env");
-var securityLogger_1 = require("../infrastructure/security/securityLogger");
-var constants_1 = require("../config/constants");
-var activeStreamsPerUser = new Map();
+const env_1 = require("../config/env");
+const securityLogger_1 = require("../infrastructure/security/securityLogger");
+const constants_1 = require("../config/constants");
+const activeStreamsPerUser = new Map();
 function streamConcurrencyLimiter(req, res, next) {
-    var user = res.locals.user;
-    var userId = (user === null || user === void 0 ? void 0 : user._id) || (user === null || user === void 0 ? void 0 : user.id) || req.ip || "anon";
-    var currentActive = activeStreamsPerUser.get(userId) || 0;
+    const user = res.locals.user;
+    const userId = user?._id || user?.id || req.ip || "anon";
+    const currentActive = activeStreamsPerUser.get(userId) || 0;
     if (currentActive >= env_1.env.STREAM_MAX_CONCURRENT) {
-        var requestId = (req.headers[constants_1.HEADER_REQUEST_ID] || res.getHeader(constants_1.HEADER_REQUEST_ID) || "unknown");
+        const requestId = (req.headers[constants_1.HEADER_REQUEST_ID] || res.getHeader(constants_1.HEADER_REQUEST_ID) || "unknown");
         (0, securityLogger_1.logSecurityEvent)({
             eventType: "RATE_LIMIT_EXCEEDED",
-            requestId: requestId,
-            userId: userId,
+            requestId,
+            userId,
             ip: req.ip,
             endpoint: req.originalUrl,
             details: { type: "stream_concurrency", active: currentActive, max: env_1.env.STREAM_MAX_CONCURRENT },
@@ -23,19 +23,19 @@ function streamConcurrencyLimiter(req, res, next) {
             success: false,
             error: {
                 code: "STREAM_CONCURRENCY_EXCEEDED",
-                message: "Maximum concurrent streaming connections (".concat(env_1.env.STREAM_MAX_CONCURRENT, ") reached. Please wait for an existing stream to complete."),
+                message: `Maximum concurrent streaming connections (${env_1.env.STREAM_MAX_CONCURRENT}) reached. Please wait for an existing stream to complete.`,
             },
-            requestId: requestId,
+            requestId,
         });
     }
     // Increment active stream count
     activeStreamsPerUser.set(userId, currentActive + 1);
     // Auto decrement on stream close / end / error
-    var cleanedUp = false;
-    var cleanup = function () {
+    let cleanedUp = false;
+    const cleanup = () => {
         if (!cleanedUp) {
             cleanedUp = true;
-            var count = activeStreamsPerUser.get(userId) || 1;
+            const count = activeStreamsPerUser.get(userId) || 1;
             if (count <= 1) {
                 activeStreamsPerUser.delete(userId);
             }
@@ -48,22 +48,22 @@ function streamConcurrencyLimiter(req, res, next) {
     res.on("finish", cleanup);
     res.on("error", cleanup);
     // Maximum stream duration safeguard
-    var timeoutId = setTimeout(function () {
+    const timeoutId = setTimeout(() => {
         if (!res.writableEnded) {
             (0, securityLogger_1.logSecurityEvent)({
                 eventType: "RATE_LIMIT_EXCEEDED",
-                userId: userId,
+                userId,
                 ip: req.ip,
                 endpoint: req.originalUrl,
                 details: { type: "stream_timeout", maxDurationMs: env_1.env.STREAM_MAX_DURATION_MS },
             });
-            res.write("data: ".concat(JSON.stringify({ error: "Stream maximum duration exceeded." }), "\n\n"));
+            res.write(`data: ${JSON.stringify({ error: "Stream maximum duration exceeded." })}\n\n`);
             res.end();
             cleanup();
         }
     }, env_1.env.STREAM_MAX_DURATION_MS);
-    res.on("close", function () { return clearTimeout(timeoutId); });
-    res.on("finish", function () { return clearTimeout(timeoutId); });
+    res.on("close", () => clearTimeout(timeoutId));
+    res.on("finish", () => clearTimeout(timeoutId));
     return next();
 }
 exports.streamConcurrencyLimiter = streamConcurrencyLimiter;
