@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KnowledgeDocumentModel = void 0;
-var mongoose_1 = __importDefault(require("mongoose"));
-var knowledgeDocumentSchema = new mongoose_1.default.Schema({
+const mongoose_1 = __importDefault(require("mongoose"));
+const knowledgeDocumentSchema = new mongoose_1.default.Schema({
     ownerId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "User",
@@ -53,6 +53,6 @@ var knowledgeDocumentSchema = new mongoose_1.default.Schema({
 // Indexes
 knowledgeDocumentSchema.index({ ownerId: 1, status: 1, createdAt: -1 });
 knowledgeDocumentSchema.index({ ownerId: 1, contentHash: 1, status: 1 });
-var KnowledgeDocumentModel = mongoose_1.default.model("KnowledgeDocument", knowledgeDocumentSchema);
+const KnowledgeDocumentModel = mongoose_1.default.model("KnowledgeDocument", knowledgeDocumentSchema);
 exports.KnowledgeDocumentModel = KnowledgeDocumentModel;
 exports.default = KnowledgeDocumentModel;
