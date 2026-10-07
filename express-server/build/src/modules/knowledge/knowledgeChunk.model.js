@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KnowledgeChunkModel = void 0;
-var mongoose_1 = __importDefault(require("mongoose"));
-var knowledgeChunkSchema = new mongoose_1.default.Schema({
+const mongoose_1 = __importDefault(require("mongoose"));
+const knowledgeChunkSchema = new mongoose_1.default.Schema({
     documentId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "KnowledgeDocument",
@@ -43,6 +43,6 @@ var knowledgeChunkSchema = new mongoose_1.default.Schema({
 });
 // Indexes
 knowledgeChunkSchema.index({ ownerId: 1, documentId: 1, sequence: 1 });
-var KnowledgeChunkModel = mongoose_1.default.model("KnowledgeChunk", knowledgeChunkSchema);
+const KnowledgeChunkModel = mongoose_1.default.model("KnowledgeChunk", knowledgeChunkSchema);
 exports.KnowledgeChunkModel = KnowledgeChunkModel;
 exports.default = KnowledgeChunkModel;
