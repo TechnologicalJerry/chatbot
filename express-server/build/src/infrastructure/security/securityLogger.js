@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.logSecurityEvent = void 0;
-var logger_1 = __importDefault(require("../logger/logger"));
-var metrics_1 = require("../metrics/metrics");
+const logger_1 = __importDefault(require("../logger/logger"));
+const metrics_1 = require("../metrics/metrics");
 function sanitizeData(data) {
-    var SENSITIVE_KEYS = [
+    const SENSITIVE_KEYS = [
         "password",
         "token",
         "accesstoken",
@@ -18,10 +18,10 @@ function sanitizeData(data) {
         "openai_api_key",
         "key",
     ];
-    var sanitized = {};
-    var _loop_1 = function (key, value) {
-        var lowerKey = key.toLowerCase();
-        if (SENSITIVE_KEYS.some(function (s) { return lowerKey.includes(s); })) {
+    const sanitized = {};
+    for (const [key, value] of Object.entries(data)) {
+        const lowerKey = key.toLowerCase();
+        if (SENSITIVE_KEYS.some((s) => lowerKey.includes(s))) {
             sanitized[key] = "[REDACTED]";
         }
         else if (value && typeof value === "object" && !Array.isArray(value)) {
@@ -30,16 +30,12 @@ function sanitizeData(data) {
         else {
             sanitized[key] = value;
         }
-    };
-    for (var _i = 0, _a = Object.entries(data); _i < _a.length; _i++) {
-        var _b = _a[_i], key = _b[0], value = _b[1];
-        _loop_1(key, value);
     }
     return sanitized;
 }
 function logSecurityEvent(options) {
-    var eventType = options.eventType, requestId = options.requestId, userId = options.userId, ip = options.ip, endpoint = options.endpoint, _a = options.details, details = _a === void 0 ? {} : _a;
-    var sanitizedDetails = sanitizeData(details);
+    const { eventType, requestId, userId, ip, endpoint, details = {} } = options;
+    const sanitizedDetails = sanitizeData(details);
     logger_1.default.warn({
         securityEvent: eventType,
         requestId: requestId || "unknown",
@@ -48,7 +44,7 @@ function logSecurityEvent(options) {
         endpoint: endpoint || "unknown",
         details: sanitizedDetails,
         timestamp: new Date().toISOString(),
-    }, "[SECURITY EVENT] ".concat(eventType));
+    }, `[SECURITY EVENT] ${eventType}`);
     // Update corresponding security metrics
     switch (eventType) {
         case "AUTH_FAILURE":
