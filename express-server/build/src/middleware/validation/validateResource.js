@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateResource = void 0;
-var zod_1 = require("zod");
-var appError_1 = require("../../errors/appError");
-var validateResource = function (schema) {
-    return function (req, res, next) {
+const zod_1 = require("zod");
+const appError_1 = require("../../errors/appError");
+const validateResource = (schema) => {
+    return (req, res, next) => {
         try {
             schema.parse({
                 body: req.body,
@@ -22,4 +22,4 @@ var validateResource = function (schema) {
     };
 };
 exports.validateResource = validateResource;
-exports.default = validateResource;
+exports.default = exports.validateResource;
