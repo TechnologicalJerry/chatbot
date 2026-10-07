@@ -3,12 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = require("express");
-var knowledge_controller_1 = require("./knowledge.controller");
-var requireUser_1 = __importDefault(require("../../middleware/auth/requireUser"));
-var validateResource_1 = __importDefault(require("../../middleware/validation/validateResource"));
-var knowledge_schema_1 = require("./knowledge.schema");
-var router = (0, express_1.Router)();
+const express_1 = require("express");
+const knowledge_controller_1 = require("./knowledge.controller");
+const requireUser_1 = __importDefault(require("../../middleware/auth/requireUser"));
+const validateResource_1 = __importDefault(require("../../middleware/validation/validateResource"));
+const knowledge_schema_1 = require("./knowledge.schema");
+const router = (0, express_1.Router)();
 // All knowledge endpoints require authentication
 router.use(requireUser_1.default);
 /**
@@ -56,7 +56,7 @@ router.use(requireUser_1.default);
  *       403:
  *         description: Unauthorized
  */
-var rateLimiter_middleware_1 = require("../../middleware/rateLimiter.middleware");
+const rateLimiter_middleware_1 = require("../../middleware/rateLimiter.middleware");
 router.post("/", rateLimiter_middleware_1.ingestionRateLimiter, (0, validateResource_1.default)(knowledge_schema_1.ingestDocumentSchema), knowledge_controller_1.ingestDocumentHandler);
 router.get("/", knowledge_controller_1.listDocumentsHandler);
 /**
