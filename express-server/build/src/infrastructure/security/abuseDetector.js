@@ -1,26 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defaultAbuseDetector = exports.AbuseDetector = void 0;
-var AbuseDetector = /** @class */ (function () {
-    function AbuseDetector() {
-        this.trackingMap = new Map();
-        this.DECAY_MS = 10 * 60 * 1000; // 10 minutes score decay window
-    }
-    AbuseDetector.prototype.recordSignal = function (key, signal) {
-        var now = Date.now();
-        var track = this.trackingMap.get(key);
+class AbuseDetector {
+    trackingMap = new Map();
+    DECAY_MS = 10 * 60 * 1000; // 10 minutes score decay window
+    recordSignal(key, signal) {
+        const now = Date.now();
+        let track = this.trackingMap.get(key);
         if (!track) {
             track = { score: 0, lastUpdated: now };
         }
         else {
             // Decay score based on time passed
-            var elapsed = now - track.lastUpdated;
-            var decayFactor = Math.max(0, 1 - elapsed / this.DECAY_MS);
+            const elapsed = now - track.lastUpdated;
+            const decayFactor = Math.max(0, 1 - elapsed / this.DECAY_MS);
             track.score = track.score * decayFactor;
             track.lastUpdated = now;
         }
         // Add signal weight
-        var weight = 1;
+        let weight = 1;
         switch (signal) {
             case "AUTH_FAILURE":
                 weight = 5;
@@ -47,26 +45,25 @@ var AbuseDetector = /** @class */ (function () {
             return { action: "throttle", score: track.score, reason: "Moderate abuse score accumulated." };
         }
         return { action: "allow", score: track.score };
-    };
-    AbuseDetector.prototype.getStatus = function (key) {
-        var track = this.trackingMap.get(key);
+    }
+    getStatus(key) {
+        const track = this.trackingMap.get(key);
         if (!track)
             return { action: "allow", score: 0 };
-        var elapsed = Date.now() - track.lastUpdated;
-        var decayFactor = Math.max(0, 1 - elapsed / this.DECAY_MS);
-        var score = track.score * decayFactor;
+        const elapsed = Date.now() - track.lastUpdated;
+        const decayFactor = Math.max(0, 1 - elapsed / this.DECAY_MS);
+        const score = track.score * decayFactor;
         if (score >= 25) {
-            return { action: "block", score: score, reason: "Severe suspicious activity accumulated." };
+            return { action: "block", score, reason: "Severe suspicious activity accumulated." };
         }
         else if (score >= 12) {
-            return { action: "throttle", score: score, reason: "Moderate abuse score accumulated." };
+            return { action: "throttle", score, reason: "Moderate abuse score accumulated." };
         }
-        return { action: "allow", score: score };
-    };
-    AbuseDetector.prototype.clearKey = function (key) {
+        return { action: "allow", score };
+    }
+    clearKey(key) {
         this.trackingMap.delete(key);
-    };
-    return AbuseDetector;
-}());
+    }
+}
 exports.AbuseDetector = AbuseDetector;
 exports.defaultAbuseDetector = new AbuseDetector();
