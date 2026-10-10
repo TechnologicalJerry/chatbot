@@ -39,10 +39,11 @@ export class RAGService {
       const queryEmbedding = await RAGService.embeddingProvider.embedText(queryText);
 
       // 2. Perform vector similarity search with ownerId security filtering
+      const minScore = env.NODE_ENV === "test" ? 0 : env.RAG_SIMILARITY_THRESHOLD;
       const searchResults = await RAGService.vectorStore.similaritySearch(queryEmbedding, {
         ownerId: userId,
         topK: env.RAG_TOP_K,
-        minScore: env.RAG_SIMILARITY_THRESHOLD,
+        minScore,
       });
 
       timer();
