@@ -13,6 +13,9 @@ export const env = {
   AI_MEMORY_CONFIDENCE_THRESHOLD: Number(process.env.AI_MEMORY_CONFIDENCE_THRESHOLD) || 0.7,
   OPENAI_MODEL: process.env.OPENAI_MODEL || "gpt-4o-mini",
   OPENAI_API_KEY: process.env.OPENAI_API_KEY || "",
+  OPENAI_EMBEDDING_MODEL: process.env.OPENAI_EMBEDDING_MODEL || "text-embedding-3-small",
+  AI_ALLOWED_MODELS: process.env.AI_ALLOWED_MODELS ? process.env.AI_ALLOWED_MODELS.split(",") : ["gpt-4o-mini", "gpt-4o", "gpt-3.5-turbo"],
+  AI_MAX_OUTPUT_TOKENS: Number(process.env.AI_MAX_OUTPUT_TOKENS) || 1024,
   QUEUE_PREFIX: process.env.QUEUE_PREFIX || "chatbot",
   AI_DAILY_TOKEN_LIMIT: Number(process.env.AI_DAILY_TOKEN_LIMIT) || 50000,
   AI_DAILY_REQUEST_LIMIT: Number(process.env.AI_DAILY_REQUEST_LIMIT) || 500,
@@ -26,6 +29,9 @@ export const env = {
   RAG_MAX_DOCUMENT_SIZE: Number(process.env.RAG_MAX_DOCUMENT_SIZE) || 500000,
   RAG_CHUNK_SIZE: Number(process.env.RAG_CHUNK_SIZE) || 500,
   RAG_CHUNK_OVERLAP: Number(process.env.RAG_CHUNK_OVERLAP) || 50,
+  RAG_TOP_K: Number(process.env.RAG_TOP_K) || 5,
+  RAG_SIMILARITY_THRESHOLD: Number(process.env.RAG_SIMILARITY_THRESHOLD) || 0.7,
+  CACHE_DEFAULT_TTL: Number(process.env.CACHE_DEFAULT_TTL) || 300,
   WORKER_CONCURRENCY: Number(process.env.WORKER_CONCURRENCY) || 5,
 };
 
