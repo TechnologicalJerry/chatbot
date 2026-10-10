@@ -30,9 +30,7 @@ export class OpenAIEmbeddingProvider implements IEmbeddingProvider {
         return texts.map((t) => this.generateMockEmbedding(t));
       }
       throw AppError.badRequest(
-        "OpenAI API key is missing for embeddings",
-        undefined,
-        "AI_CONFIGURATION_ERROR"
+        "OpenAI API key is missing for embeddings"
       );
     }
 
