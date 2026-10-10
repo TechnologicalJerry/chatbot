@@ -1,17 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteMemorySchema = exports.getMemoriesSchema = void 0;
-var zod_1 = require("zod");
-exports.getMemoriesSchema = zod_1.z.object({
-    query: zod_1.z.object({
-        type: zod_1.z.enum(["preference", "profile", "goal", "constraint", "fact"]).optional(),
-        limit: zod_1.z.coerce.number().min(1).max(50).default(20),
+exports.deleteMemorySchema = exports.createMemorySchema = void 0;
+const zod_1 = require("zod");
+exports.createMemorySchema = (0, zod_1.object)({
+    body: (0, zod_1.object)({
+        type: (0, zod_1.enum)(["preference", "fact", "goal", "profile"]),
+        key: (0, zod_1.string)({ required_error: "key is required" }),
+        value: (0, zod_1.string)({ required_error: "value is required" }),
+        conversationId: (0, zod_1.string)().optional(),
+        confidence: (0, zod_1.number)().optional(),
     }),
 });
-exports.deleteMemorySchema = zod_1.z.object({
-    params: zod_1.z.object({
-        memoryId: zod_1.z.string({
-            required_error: "Memory ID is required",
-        }),
+exports.deleteMemorySchema = (0, zod_1.object)({
+    params: (0, zod_1.object)({
+        memoryId: (0, zod_1.string)({ required_error: "memoryId is required" }),
     }),
 });
