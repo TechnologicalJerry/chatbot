@@ -26,7 +26,7 @@ export class GetConversationSummaryTool implements ITool {
       conversationId: conv._id,
       title: conv.title,
       summary: conv.summary || "No summary generated yet.",
-      summarizedThroughSequence: conv.summarizedThroughSequence || 0,
+      summarizedThroughSequence: (conv as any).summarizedThroughSequence || conv.summaryLastMessageCount || 0,
     };
   }
 }
