@@ -42,7 +42,7 @@ export class KnowledgeService {
     });
 
     if (existingDoc) {
-      throw AppError.badRequest("Document with identical content already exists", undefined, "DUPLICATE_DOCUMENT");
+      throw AppError.badRequest("Document with identical content already exists");
     }
 
     // 3. Create document record in "processing" state
