@@ -29,6 +29,14 @@ export class ToolRegistry {
     return Array.from(this.tools.values());
   }
 
+  public async executeTool(name: string, args: any, context?: any): Promise<any> {
+    const tool = this.getTool(name);
+    if (!tool) {
+      throw new Error(`Tool '${name}' is not registered`);
+    }
+    return tool.execute(args, context);
+  }
+
   /**
    * Convert registered tools into provider-independent ToolDefinition format.
    */
@@ -41,14 +49,13 @@ export class ToolRegistry {
   }
 
   private zodSchemaToParameters(schema: any): Record<string, unknown> {
-    // Basic Zod schema to JSON schema parameters converter
     try {
       if (schema && schema._def) {
         const shape = schema._def.shape ? schema._def.shape() : {};
         const properties: Record<string, unknown> = {};
         const required: string[] = [];
 
-        for (const [key, value] of Object.entries(shape)) {
+        for (const [key] of Object.entries(shape)) {
           properties[key] = { type: "string" };
           required.push(key);
         }
