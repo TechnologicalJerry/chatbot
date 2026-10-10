@@ -7,6 +7,12 @@ export interface ToolCall {
   };
 }
 
+export interface ToolDefinition {
+  name: string;
+  description: string;
+  parameters: any;
+}
+
 export interface ChatMessage {
   role: "system" | "user" | "assistant" | "tool";
   content: string;
@@ -21,8 +27,8 @@ export interface ChatCompletionOptions {
   maxTokens?: number;
   signal?: AbortSignal;
   executionContext?: {
-    userId: string;
-    conversationId: string;
+    userId?: string;
+    conversationId?: string;
   };
 }
 
