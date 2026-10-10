@@ -7,7 +7,7 @@ export interface AllowedModelPolicy {
 }
 
 export function enforceModelPolicy(requestedModel?: string, requestedMaxTokens?: number): AllowedModelPolicy {
-  const allowedList = env.AI_ALLOWED_MODELS.split(",").map((m) => m.trim().toLowerCase());
+  const allowedList = (Array.isArray(env.AI_ALLOWED_MODELS) ? env.AI_ALLOWED_MODELS : String(env.AI_ALLOWED_MODELS).split(",")).map((m: string) => m.trim().toLowerCase());
   const defaultModel = env.OPENAI_MODEL;
 
   let selectedModel = defaultModel;
