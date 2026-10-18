@@ -138,7 +138,7 @@ export async function startWorkerProcess(): Promise<void> {
 
       try {
         const { userId, conversationId, userContent, assistantContent } = job.data;
-        await MemoryService.extractAndStoreMemories(userId, conversationId, userContent, assistantContent);
+        await MemoryService.extractAndStoreMemories(userId, conversationId, userContent, assistantContent || "");
         timer();
         queueJobsCompletedCounter.inc({ queue: "memory", jobType: job.name });
       } catch (err: any) {
